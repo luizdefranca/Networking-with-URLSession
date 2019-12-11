@@ -40,6 +40,7 @@
 		2597467523A08E3A001135E1 /* ConcurrencyTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrencyTestTests.swift; sourceTree = "<group>"; };
 		2597467723A08E3A001135E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2597468023A0A512001135E1 /* CalculatePrimeOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatePrimeOperation.swift; sourceTree = "<group>"; };
+		2597468223A0ACE5001135E1 /* ConfigurationPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ConfigurationPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +86,7 @@
 				2597466023A08E38001135E1 /* SceneDelegate.swift */,
 				2597468023A0A512001135E1 /* CalculatePrimeOperation.swift */,
 				2597466223A08E38001135E1 /* ViewController.swift */,
+				2597468223A0ACE5001135E1 /* ConfigurationPlayground.playground */,
 				2597466423A08E38001135E1 /* Main.storyboard */,
 				2597466723A08E3A001135E1 /* Assets.xcassets */,
 				2597466923A08E3A001135E1 /* LaunchScreen.storyboard */,
