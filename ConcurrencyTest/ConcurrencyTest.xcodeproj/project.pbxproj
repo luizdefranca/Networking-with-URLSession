@@ -14,6 +14,7 @@
 		2597466823A08E3A001135E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2597466723A08E3A001135E1 /* Assets.xcassets */; };
 		2597466B23A08E3A001135E1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2597466923A08E3A001135E1 /* LaunchScreen.storyboard */; };
 		2597467623A08E3A001135E1 /* ConcurrencyTestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2597467523A08E3A001135E1 /* ConcurrencyTestTests.swift */; };
+		2597468123A0A512001135E1 /* CalculatePrimeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2597468023A0A512001135E1 /* CalculatePrimeOperation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		2597467123A08E3A001135E1 /* ConcurrencyTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConcurrencyTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2597467523A08E3A001135E1 /* ConcurrencyTestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrencyTestTests.swift; sourceTree = "<group>"; };
 		2597467723A08E3A001135E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2597468023A0A512001135E1 /* CalculatePrimeOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatePrimeOperation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 			children = (
 				2597465E23A08E38001135E1 /* AppDelegate.swift */,
 				2597466023A08E38001135E1 /* SceneDelegate.swift */,
+				2597468023A0A512001135E1 /* CalculatePrimeOperation.swift */,
 				2597466223A08E38001135E1 /* ViewController.swift */,
 				2597466423A08E38001135E1 /* Main.storyboard */,
 				2597466723A08E3A001135E1 /* Assets.xcassets */,
@@ -200,6 +203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2597468123A0A512001135E1 /* CalculatePrimeOperation.swift in Sources */,
 				2597466323A08E38001135E1 /* ViewController.swift in Sources */,
 				2597465F23A08E38001135E1 /* AppDelegate.swift in Sources */,
 				2597466123A08E38001135E1 /* SceneDelegate.swift in Sources */,
