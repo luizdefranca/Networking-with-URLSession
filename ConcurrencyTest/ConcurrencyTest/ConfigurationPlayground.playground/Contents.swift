@@ -1,6 +1,6 @@
 import UIKit
 import PlaygroundSupport
-
+/*
 let mySharedSession = URLSession.shared
 
 mySharedSession.configuration.allowsCellularAccess
@@ -59,4 +59,29 @@ let task = session.dataTask(with: url) {
 
 }
 task.resume()
+*/
+let json = "{'hello': 'world'}"
+let urlPost = URL(string: "http://httpbin.org/post")!
+var request = URLRequest(url: urlPost)
+request.httpMethod = "Post"
+request.httpBody = json.data(using: .utf8)
+
+let newSession = URLSession(configuration: .default)
+let newTask = newSession.dataTask(with: request) { (data, response, error) in
+
+    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        print("Error")
+        return
+    }
+
+    guard let data = data, let postResponse = String(data: data, encoding: .utf8) else {
+        print(error.debugDescription)
+        return
+    }
+    print(postResponse)
+     PlaygroundPage.current.finishExecution()
+
+}
+newTask.resume()
+
 
