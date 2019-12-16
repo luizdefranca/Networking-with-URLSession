@@ -29,10 +29,27 @@ class ViewController: UIViewController {
   }
 
   func displayImage(index: Int) {
-      
-//      guard let location = location,
-//            let imageData = self.getImageData(location: location),
-//            let image = UIImage(data: imageData) else { return }
+
+    let url: URL = imageUrls[index]
+
+    let task = URLSession.shared.downloadTask(with: url) { (location , response, error) in
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+//            print("error: \(error?.localizedDescription)")
+            return
+        }
+
+
+         guard let location = location,
+                let imageData = self.getImageData(location: location),
+                   let image = UIImage(data: imageData) else { return }
+
+        DispatchQueue.main.async {
+            self.imageView.image = image
+        }
+    }
+
+    task.resume()
     
   }
   
