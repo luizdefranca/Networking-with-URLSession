@@ -62,29 +62,29 @@ let task = session.dataTask(with: url) {
 }
 task.resume()
 */
-let json = "{'hello': 'world'}"
-let urlPost = URL(string: "http://httpbin.org/post")!
-var request = URLRequest(url: urlPost)
-request.httpMethod = "Post"
-request.httpBody = json.data(using: .utf8)
-
-let newSession = URLSession(configuration: .default)
-let newTask = newSession.dataTask(with: request) { (data, response, error) in
-
-    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-        print("Error")
-        return
-    }
-
-    guard let data = data, let postResponse = String(data: data, encoding: .utf8) else {
-        print(error.debugDescription)
-        return
-    }
-    print(postResponse)
-     PlaygroundPage.current.finishExecution()
-
-}
-newTask.resume()
+//let json = "{'hello': 'world'}"
+//let urlPost = URL(string: "http://httpbin.org/post")!
+//var request = URLRequest(url: urlPost)
+//request.httpMethod = "Post"
+//request.httpBody = json.data(using: .utf8)
+//
+//let newSession = URLSession(configuration: .default)
+//let newTask = newSession.dataTask(with: request) { (data, response, error) in
+//
+//    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+//        print("Error")
+//        return
+//    }
+//
+//    guard let data = data, let postResponse = String(data: data, encoding: .utf8) else {
+//        print(error.debugDescription)
+//        return
+//    }
+//    print(postResponse)
+//     PlaygroundPage.current.finishExecution()
+//
+//}
+//newTask.resume()
 
 /*
 Task Priorities
@@ -157,3 +157,39 @@ let task = URLSession.shared.uploadTask(with: request, from: imageData) {
 //let upConfiguration = URLSessionConfiguration.background(withIdentifier: "com.myuploadMethod")
 //let upSession = URLSession(configuration: upConfiguration)
 //let upTask = upSession.uploadTask(with: <#T##URLRequest#>, from: <#T##Data#>)
+
+/*
+ Background session
+
+
+ */
+
+class SessionDelegate: NSObject, URLSessionDownloadDelegate {
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let localFilePath: (URL) -> URL = { url in
+
+            return documentsPath.appendingPathComponent(url.lastPathComponent)
+        }
+
+
+        guard let sourceURL = downloadTask.originalRequest?.url else { return }
+
+
+        let destionationURL = localFilePath(sourceURL)
+
+        let fileManager = FileManager.default
+        
+
+    }
+
+
+}
+
+let configuration = URLSessionConfiguration.background( withIdentifier: "com.luizramos.prefetch")
+configuration.networkServiceType = .background
+let session = URLSession(configuration: configuration, delegate: SessionDelegate(), delegateQueue: nil)
+
+
+
+PlaygroundPage.current.finishExecution()

@@ -31,6 +31,7 @@ class ViewController: UIViewController {
   func displayImage(index: Int) {
 
     let url: URL = imageUrls[index]
+    
 
     let task = URLSession.shared.downloadTask(with: url) { (location , response, error) in
 
