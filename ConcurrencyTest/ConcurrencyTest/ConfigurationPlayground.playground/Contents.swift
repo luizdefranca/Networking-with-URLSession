@@ -164,35 +164,35 @@ let task = URLSession.shared.uploadTask(with: request, from: imageData) {
 
  */
 
-class SessionDelegate: NSObject, URLSessionDownloadDelegate {
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let localFilePath: (URL) -> URL = { url in
-
-            return documentsPath.appendingPathComponent(url.lastPathComponent)
-        }
-
-
-        guard let sourceURL = downloadTask.originalRequest?.url else { return }
-
-
-        let destionationURL = localFilePath(sourceURL)
-
-        let fileManager = FileManager.default
-
-
-    }
-
-
-}
-
-let configuration = URLSessionConfiguration.background( withIdentifier: "com.luizramos.prefetch")
-configuration.networkServiceType = .background
-let session = URLSession(configuration: configuration, delegate: SessionDelegate(), delegateQueue: nil)
-
-
-
-PlaygroundPage.current.finishExecution()
+//class SessionDelegate: NSObject, URLSessionDownloadDelegate {
+//    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+//        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+//        let localFilePath: (URL) -> URL = { url in
+//
+//            return documentsPath.appendingPathComponent(url.lastPathComponent)
+//        }
+//
+//
+//        guard let sourceURL = downloadTask.originalRequest?.url else { return }
+//
+//
+//        let destionationURL = localFilePath(sourceURL)
+//
+//        let fileManager = FileManager.default
+//
+//
+//    }
+//
+//
+//}
+//
+//let configuration = URLSessionConfiguration.background( withIdentifier: "com.luizramos.prefetch")
+//configuration.networkServiceType = .background
+//let session = URLSession(configuration: configuration, delegate: SessionDelegate(), delegateQueue: nil)
+//
+//
+//
+//PlaygroundPage.current.finishExecution()
 
 /*
 URL - Uniform Resource Locator
@@ -222,4 +222,101 @@ HTTP - HyperText Transfer Protocol
  - application/pdf
  - image/png, image/jpeg, image/gif
  - multipart/form-data - when the client send any kind of binary file, as well as text elements.
+
+ *** URLSession ***
+ - allowsCellularAccess -> It's used to specify if the app should only use wi-fi or not
+ - waitsForConnectivity -> removes the need for network notifications. We have to set it to true in
+ a non-background configuration and if the user loses network while your task is running, the system
+ will periodically check for network and retry your task.
+
+ - {
+    multipathServiceType = .handover
+    allowsCellularAccess = true
+    } -> if your task transfer only small amount of data when there's no wi-fi, you might be able
+    to use multipath TCP.
+    There are two main type:
+    .handover -> switches to cellular when your app loses wif-i
+    .interactive -> switches to cellular when wi-fi signal gets weak
+
+ *** URLSessionTasks ***
+
+ 1 - URLSessionDataTask
+    * response in memory
+    * not supported in background sessions
+ 2 - URLSessionUploadTask
+    * easier to provide request body
+ 3 - URLSessionDownloadTask
+    * response written to file on disk
+
+ *** URLSessionDataTask ***
+    - func dataTask(with: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+        -> default method to get
+    - func dataTask(with: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) - Void)
+        -> used for post and put requests
+    -   func dataTask(with: URL)
+        func dataTask(with: URLRequest)
+        -> They are used for more complex transfer where you need to monitor progress or handle
+        intermediate response data. This session must has delegate and implements relevant delegate
+        methods.
+
+
+
+
+
  */
+
+let urlString = "https://itunes.apple.com/search?media=music&entity=song&term=abba"
+let newUrl = URL(string: urlString)
+newUrl?.absoluteString
+newUrl?.scheme
+newUrl?.host
+newUrl?.path
+newUrl?.query
+newUrl?.baseURL
+
+
+//Using urlComponents
+let baseURl = "https://itunes.apple.com"
+var urlComponents = URLComponents(string: baseURl)
+urlComponents?.path = "/search"
+urlComponents?.query = "media=music&entity=song&term=abba"
+let createdURL = urlComponents?.url
+
+//Using relativeTo
+
+let baseURL2 = URL(string: "https://itunes.apple.com")
+let relativeURL = URL(fileURLWithPath: "search", relativeTo: baseURL2)
+
+//Another way
+var urlComponents2 = URLComponents(string: urlString)
+let queryItem = URLQueryItem(name: "term", value: "crowded house")
+urlComponents2?.queryItems?.append(queryItem)
+urlComponents2?.url
+
+//URL-encode "smiling cat"
+let queryEmojiItem = URLQueryItem(name: "emoji", value: "😻")
+urlComponents2?.queryItems?.append(queryEmojiItem)
+urlComponents2?.url
+
+let challengeURl = baseURl
+
+let configuration = URLSessionConfiguration.ephemeral
+configuration.allowsCellularAccess = true
+configuration.waitsForConnectivity = true
+configuration.multipathServiceType = .handover
+configuration.urlCache?.diskCapacity
+configuration.urlCache?.memoryCapacity
+
+//creating a cache to set to ephemeral Session Configuration
+
+let cache = URLCache(memoryCapacity: 512_000, diskCapacity: 10_000_000, diskPath: nil)
+configuration.urlCache = cache
+configuration.urlCache?.diskCapacity
+configuration.urlCache?.memoryCapacity
+
+let mySession = URLSession(configuration: configuration)
+let secondSession = URLSession(configuration: .default)
+
+
+
