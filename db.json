@@ -1,9 +1,29 @@
 {
   "posts": [
     {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
+      "title": "Using PostRouter",
+      "author": "a friend of mine",
+      "id": 1
+    },
+    {
+      "title": "Any Title",
+      "author": "Luiz",
+      "id": 2
+    },
+    {
+      "title": "Any Title",
+      "author": "Luiz",
+      "id": 3
+    },
+    {
+      "title": "Using PostRouter",
+      "author": "a frind of Alamofire",
+      "id": 4
+    },
+    {
+      "title": "Using PostRouter",
+      "author": "a frind of Alamofire",
+      "id": 5
     }
   ],
   "comments": [

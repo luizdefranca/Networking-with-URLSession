@@ -70,10 +70,10 @@ public enum PostRouter {
   var method: String {
     // TODO: Return "GET", "POST", "PUT" or "DELETE", as appropriate
     switch self {
-    case .getAll, .get: return ""
-    case .create: return ""
-    case .update: return ""
-    case .delete: return ""
+    case .getAll, .get: return "GET"
+    case .create: return "POST"
+    case .update: return "PUT"
+    case .delete: return "DELETE"
     }
   }
 
@@ -84,8 +84,10 @@ public enum PostRouter {
       let relativePath: String?
       // TODO: Set relativePath to use id, as appropriate
       switch self {
-      case .getAll, .create: relativePath = ""
-      case .get(let id), .update(let id, _), .delete(let id): relativePath = ""
+      case .getAll, .create:
+        relativePath = ""
+      case .get(let id), .update(let id, _), .delete(let id):
+        relativePath = "\(id)"
       }
 
       var url = URL(string: PostRouter.baseURLString)!
@@ -106,12 +108,19 @@ public enum PostRouter {
     // Create request
     var request = URLRequest(url: url)
     // TODO: Set httpMethod
-
+    request.httpMethod = method
     // TODO: Set HTTP header field content-type to application/json
-
+    request.setValue("application/json", forHTTPHeaderField: "content-type")
     // TODO: If there are parameters, and they can be converted to data, set httpBody
     
-    
+    if let param = parameters {
+        do {
+            let data = try JSONEncoder().encode(param)
+            request.httpBody = data
+        } catch let encoderError {
+            print("Encoder Error: \(encoderError.localizedDescription)")
+        }
+    }
     return request
   }
 

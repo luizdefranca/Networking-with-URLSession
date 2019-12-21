@@ -9,19 +9,22 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 //: Use ephemeral session:
 let session = URLSession(configuration: .ephemeral)
 //: __TODO:__ After completing the `PostRouter` enum in __Sources__, use it to replace the two lines below, with the complete PUT request to update **posts/1** to `["author": "a friend of Alamofire", "title": "Using PostRouter"]`:
-let putUrl = URL(string: "http://localhost:3000/posts/1")
-let putRequest = URLRequest(url: putUrl!)
+let putPost = Post(author: "a friend of mine", title: "Using PostRouter")
+let postRouter = PostRouter.update(1, putPost)
+//let postRouter = PostRouter.create(<#T##Post#>)
+let putRequest = postRouter.asURLRequest()
 //: Here's the code from the previous page, to create a data task with a completion handler that checks for `data`,
 //: `response` with status code 200, then converts `data` to `JSONDictionary`:
 let putTask = session.dataTask(with: putRequest) { data, response, error in
   // handler just shows us what we updated on json-server
   defer { PlaygroundPage.current.finishExecution() }
   guard let data = data, let response = response as? HTTPURLResponse,
-    response.statusCode == 200 else {
+    case 200 ..< 300 = response.statusCode  else {
       print("No data or statusCode not OK")
+
       return
   }
-
+    print("Status Code: \(response.statusCode) - \(response.description)/n")
   let decoder = JSONDecoder()
   do {
     let post = try decoder.decode(PostWithId.self, from: data)
