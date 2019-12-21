@@ -179,7 +179,7 @@ class SessionDelegate: NSObject, URLSessionDownloadDelegate {
         let destionationURL = localFilePath(sourceURL)
 
         let fileManager = FileManager.default
-        
+
 
     }
 
@@ -193,3 +193,33 @@ let session = URLSession(configuration: configuration, delegate: SessionDelegate
 
 
 PlaygroundPage.current.finishExecution()
+
+/*
+URL - Uniform Resource Locator
+HTTP - HyperText Transfer Protocol
+ Post - Create
+ Get - Read
+ Put - Update
+ Delete - Delete
+ Head - get headers only, it's similar to get, but without the data. It's useful if you only need
+ the metadata for a large amount of data, to check whether to check if you need to download it or
+ wheter to store it in a file instead of your memory. The default cache method uses this method to
+ see if the data changed.
+
+ The client makes a request which is a message and receives a response from the server according
+ to the verb request (post, get, put, etc). The message has a body and header.
+
+  *** Content Types ***
+
+ content type specifies the internet media type of the data conveyed by the HTTP message.
+
+ Content Types for text data:
+ - application/json - most common for app clients
+ - application/x-www-form-urlencoded - uses form-encoded, which looks like a query string
+ - text/html
+
+ Content types for binary data:
+ - application/pdf
+ - image/png, image/jpeg, image/gif
+ - multipart/form-data - when the client send any kind of binary file, as well as text elements.
+ */
