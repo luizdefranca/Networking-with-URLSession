@@ -28,16 +28,42 @@ let url = URL(string: urlString)!
 //:
 //: __TODO 1 of 3:__ Create a JSON decoder and a `Codable` struct to store `Post` objects.
 //: Make sure the struct's property names match the keys in the response data:
-
-struct Post {
-
+/*
+ "id": 1,
+ "title": "json-server",
+ "author": "typicode"
+ */
+struct Post: Codable {
+    let id : Int
+    let title : String
+    let author : String
 
 }
 //: The properties below set up an array of `Post` objects, and initialize `errorMessage` to an empty string:
 var posts: [Post] = []
 var errorMessage = ""
 //: __TODO 2 of 3:__ Create the task, with `url` and completion handler (rearrange and adapt the demo code; in this case, the response data is an unkeyed array that matches `[Post]`):
+let task = defaultSession.dataTask(with: url) { (data, response, error) in
 
+    if let error = error {
+        errorMessage += "DataTask error: " + error.localizedDescription
+    } else {
+        if let data = data, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+            do {
+                let posts = try JSONDecoder().decode( [Post].self, from: data)
+                for post in posts {
+                    print(post)
+                }
+
+            } catch let error {
+                errorMessage += "Decoder error: \(error.localizedDescription)"
+            }
+        }
+    }
+
+    print(errorMessage)
+    PlaygroundPage.current.finishExecution()
+}
 
 
 
@@ -47,5 +73,6 @@ var errorMessage = ""
 
 // TODO 3 of 3: Remember to resume (start) the task
 
+task.resume()
 //: Run your `json-server` in Terminal: `json-server --watch db.json`, then run this playground.
 //: You can double-check the result in RESTed by GETting all posts.

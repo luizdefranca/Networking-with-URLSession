@@ -13,6 +13,11 @@ struct Track: Decodable {
   let trackName: String
   let artistName: String
   let previewUrl: String
+
+    enum CodingKeys : String, CodingKey {
+
+        case trackName, artistName, previewUrl
+    }
 }
 
 struct TrackList: Decodable {
@@ -25,10 +30,32 @@ class QueryService {
 
   func getSearchResults() {
     let url = URL(string: "https://itunes.apple.com/search?media=music&entity=song&term=abba")!
+    let task = defaultSession.dataTask(with: url) { (data, response, error) in
+
+        if let error = error {
+            print(error.localizedDescription)
+            return
+        }
+
+        let validStatusCode = 200 ..< 300
+        guard let httpResponse = response as? HTTPURLResponse, validStatusCode.contains(httpResponse.statusCode) else {
+            print("Error http response")
+            return
+        }
+
+        guard let data = data else {
+            return
+        }
+
+        self.updateSearchResults(data)
+        self.tracks
+//        print(String(data: data, encoding: .utf8 ))
+        PlaygroundPage.current.finishExecution()
+
+    }
 
 
-
-
+    task.resume()
 
 
 
@@ -36,13 +63,22 @@ class QueryService {
   }
 
   func updateSearchResults(_ data: Data) {
+
+
     tracks.removeAll()
 
+    do {
+         let tracklist = try JSONDecoder().decode(TrackList.self, from: data)
+//        dump(json)
 
+        for track in tracklist.results {
+            dump(track)
+        }
+    } catch let error {
+        print(error.localizedDescription)
+    }
 
-
-
-
+    PlaygroundPage.current.finishExecution()
 
   }
 
