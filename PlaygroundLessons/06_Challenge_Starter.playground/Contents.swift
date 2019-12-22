@@ -9,6 +9,9 @@ let session = URLSession(configuration: .ephemeral)
 //:
 //: __TODO 1 of 2:__ Use `PostRouter` enum (in Sources) to create a PUT request to update post 1 to `["author": "Part 6", "title": "Upload Task"]`:
 let putRequest: URLRequest
+let post = Post(author: "Part 6", title: "Upload Task")
+
+putRequest = PostRouter.update(1, post).asURLRequest()
 //: __Note:__ If we didn't have `PostRouter` to create the request,
 //: we would write code here to JSON-encode the `Post`,
 //: then pass this to the `uploadTask` `from` parameter.
@@ -18,9 +21,27 @@ let putRequest: URLRequest
 //: __TODO 2 of 2:__ create an upload task with `putRequest` and `putRequest.httpBody`,
 //: and the usual completion handler that checks for `data`,
 //: `response` with status code 200, then JSON-decodes `data` to `PostWithId`.
+let task = session.uploadTask(with: putRequest, from: putRequest.httpBody) { data, response, error in
+      defer { PlaygroundPage.current.finishExecution()}
+    guard let data = data, let httpResponse = response as? HTTPURLResponse,
+        (200 ... 299).contains(httpResponse.statusCode) else {
+            print("No data or status code not OK")
+            return
+    }
+
+    do {
+        let post = try JSONDecoder().decode(PostWithId.self, from: data)
+        dump(post)
+
+    } catch let err {
+        print("Decoder Error: \(err.localizedDescription)")
+    }
 
 
 
+}
+
+task.resume()
 
 
 
