@@ -34,73 +34,100 @@ import Foundation
 
 class MasterViewController: UITableViewController {
 
-  var tracks: [Track] = []
-  let session = URLSession(configuration: .default)
-  let urlString = "https://rss.itunes.apple.com/api/v1/us/apple-music/hot-tracks-country/10/non-explicit.json"
-  let decoder = JSONDecoder()
+    var tracks: [Track] = []
+    let configuration = URLSessionConfiguration.background(withIdentifier: "com.luizramospe.backgroundSession")
+    var session : URLSession!
+    let urlString = "https://rss.itunes.apple.com/api/v1/us/apple-music/hot-tracks-country/10/non-explicit.json"
+    let decoder = JSONDecoder()
 
-  // MARK: - View controller life cycle
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    fetchList()
-  }
-
-  // MARK: - Helper functions
-  fileprivate func fetchList() {
-    let task = session.dataTask(with: URL(string: urlString)!) { data, response, error in
-      if let response = response as? HTTPURLResponse { print(response.statusCode) }
-      guard let data = data else { return }
-      self.updateList(data)
-      DispatchQueue.main.async {
-        self.tableView.reloadData()
-      }
+    // MARK: - View controller life cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        fetchList()
     }
-    task.resume()
-  }
 
-  fileprivate func updateList(_ data: Data) {
-    let list = try! decoder.decode(TrackList.self, from: data)
-    tracks = list.feed.results
-  }
+    // MARK: - Helper functions
+    fileprivate func fetchList() {
+        let task = session.dataTask(with: URL(string: urlString)!)
+//        { data, response, error in
+//            if let response = response as? HTTPURLResponse { print(response.statusCode) }
+//            guard let data = data else { return }
+//            self.updateList(data)
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//            }
+//        }
+        task.resume()
+    }
 
-  // MARK: - Actions
-  @IBAction func refreshList(_ sender: Any) {
-    fetchList()
-  }
+    fileprivate func updateList(_ data: Data) {
+        let list = try! decoder.decode(TrackList.self, from: data)
+        tracks = list.feed.results
+    }
 
-  // MARK: - Table View
+    // MARK: - Actions
+    @IBAction func refreshList(_ sender: Any) {
+        fetchList()
+    }
 
-  override func numberOfSections(in tableView: UITableView) -> Int {
-    return 1
-  }
+    // MARK: - Table View
 
-  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return tracks.count
-  }
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
 
-  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "CellIdentifier", for: indexPath)
-    let track = tracks[indexPath.row]
-    cell.textLabel!.text = "\(1 + indexPath.row): \(track.name)"
-    cell.detailTextLabel?.text = track.artistName
-    return cell
-  }
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tracks.count
+    }
 
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CellIdentifier", for: indexPath)
+        let track = tracks[indexPath.row]
+        cell.textLabel!.text = "\(1 + indexPath.row): \(track.name)"
+        cell.detailTextLabel?.text = track.artistName
+        return cell
+    }
+
+}
+
+
+//MARK: - URLSession data delegate methods
+extension MasterViewController: URLSessionDataDelegate {
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+
+        DispatchQueue.main.async {
+            self.updateList(data)
+            self.tableView.reloadData()
+        }
+        let urlString = "https://rss.itunes.apple.com/api/v1/us/apple-music/hot-tracks-country/20/non-explicit.json"
+        let task = session.dataTask(with: URL(string: urlString)!)
+        task.earliestBeginDate = Date(timeInterval: 30, since: Date())
+        task.resume()
+    }
+}
+
+//MARK: - URLSession Task delegate methods
+extension MasterViewController: URLSessionTaskDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask, willBeginDelayedRequest request: URLRequest, completionHandler: @escaping (URLSession.DelayedRequestDisposition, URLRequest?) -> Void) {
+        completionHandler(.continueLoading, nil)
+    }
 }
 
 // MARK: - URLSession delegate methods
 
 extension MasterViewController: URLSessionDelegate {
 
-  func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-    DispatchQueue.main.async {
-      if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-        let completionHandler = appDelegate.backgroundSessionCompletionHandler {
-        appDelegate.backgroundSessionCompletionHandler = nil
-        completionHandler()
-      }
+    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+        DispatchQueue.main.async {
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+                let completionHandler = appDelegate.backgroundSessionCompletionHandler {
+                appDelegate.backgroundSessionCompletionHandler = nil
+                completionHandler()
+            }
+        }
     }
-  }
 
 }
 
