@@ -30,7 +30,32 @@ let encoder = JSONEncoder()
 let decoder = JSONDecoder()
 //: ### Login to web app (from demo)
 //: __TODO 1 of 4:__ Copy and paste the `user` from the demo:
-let user = User(name: "jo", email: "jo@razeware.com", password: "password")
+let user = User(name: "luizz", email: "luizz@hotmail.com", password: "luizz.123")
+
+let deletePath = URL(string: "https://tilftw.herokuapp.com/acronyms")
+let deleteAcronymsPath =
+//    URL(string: "\(534)", relativeTo: newEndpoint!)
+    deletePath?.appendingPathComponent("\(534)")
+//    URL(fileURLWithPath: "\(534)", relativeTo: URL(string: "https://tilftw.herokuapp.com/acronyms") )
+
+print(deleteAcronymsPath)
+
+var deleteRequest = URLRequest(url: deleteAcronymsPath!)
+deleteRequest.allHTTPHeaderFields = [
+  "accept": "application/json",
+  "content-type": "application/json"
+]
+deleteRequest.httpMethod = "DELETE"
+
+session.dataTask(with: deleteRequest) { (_, response, error) in
+    print("delete")
+     print(response)
+    guard let response = response else {
+        print(error!.localizedDescription)
+        PlaygroundPage.current.finishExecution()
+    }
+
+}.resume()
 //: (from demo) Combine user's email and password, and encode in base64:
 let loginString = "\(user.email):\(user.password)"
 let loginData = loginString.data(using: .utf8)
@@ -46,6 +71,8 @@ loginRequest.allHTTPHeaderFields = [
 //: (from demo) Create a data task with `loginRequest`:
 var auth = Auth(token: "")
 session.dataTask(with: loginRequest) { data, response, error in
+    print("login")
+    print(response)
   guard let response = response, let data = data else {PlaygroundPage.current.finishExecution() }
   print(response)
   do {
@@ -56,22 +83,45 @@ session.dataTask(with: loginRequest) { data, response, error in
     return
   }
 //: __TODO 2 of 4:__ Create a POST request to use the authorization token:
-
+var authRequest = URLRequest(url: newEndpoint!)
+    authRequest.allHTTPHeaderFields = [
+      "accept": "application/json",
+      "content-type": "application/json",
+      "authorization": "Bearer \(auth.token)"
+    ]
 
 
 
 
 //: __TODO 3 of 4:__ Create and encode a new Acronym object:
 
+    let acronym = Acronym(short: "PN", long: "P")
+
+    do {
+        authRequest.httpBody = try JSONEncoder().encode(acronym)
+    } catch let error {
+
+        print("Decoder error: \(error.localizedDescription)")
+        PlaygroundPage.current.finishExecution()
+    }
 
 
 
 
 //: __TODO 4 of 4:__ Create a data task with `tokenAuthRequest`:
 
-
+    session.dataTask(with: authRequest) { (_, response, error) in
+        print("Create")
+        print(response)
+        guard let response = response else {
+            print("Error response: \(error!.localizedDescription)")
+            PlaygroundPage.current.finishExecution()
+        }
+//        print(response)
+        PlaygroundPage.current.finishExecution()
+    }.resume()
 
   
   // delete this, or playground will finish before new-acronym task completes
-  PlaygroundPage.current.finishExecution()
+//  PlaygroundPage.current.finishExecution()
   }.resume()
